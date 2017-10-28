@@ -1,20 +1,20 @@
 import json
 from os.path import join, exists
 
-def read_single_file(path, filename, target_file):
+def read_single_file(path, filename, dictionary):
     filepath = join(path, filename)
-    written_file = open(target_file, 'a')
     with open(filepath, 'rb') as f:
         json_data = f.read()
         articles = json.loads(json_data)
         for art in articles:
-            dic = {art['id']:art['fields']['bodyText']}
-            json.dump(dic,written_file)
-    written_file.close()
+            dictionary[art['id']] = art['fields']['bodyText']
     
 if __name__ == '__main__':
-    directory = "D:/tempdata/articles"
-    target_file = #output filename here name is the section name, like 'politics'
+    directory = "articles"
+    target_file = 'politics.json'#output filename here name is the section name, like 'politics'
+    dictionary = {}
     for filename in os.listdir(directory):
         if filename.endswith(".json"):
-            read_single_file(directory, filename, target_file)
+            read_single_file(directory, filename, dictionary)
+    with open(target_file, 'w') as f:
+        json.dump(dictionary, f)

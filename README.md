@@ -16,3 +16,6 @@ Second, each word is stemmed using Porter Stemmer.
 third, calculate tfidf sparse vector for 1, 2, 3 grams for each article, with all stop_words erased, max_df (0.5), min_df(20).
 Momery Issue, calculating tfidf matrix for 1, 2, 3 grams usually drastically inflates the size of the result. However, using forementioned steps of feature extraction reduced the size of resulted tfidf matrix down to a level a usual laptop can handle.
 
+### Issues in Training
+Training data is too big to fit in memory. try to use out-of-core methods in sklearn.
+imbalanced data. still doing research on it.

@@ -38,12 +38,14 @@ def grid_search_classifier(x_train, y_train, sample_size = 1000,\
 def train_model(classifier, X_train, Y_train, sample_size = 1000):
     #load in data
     #2 grams features
-
+    
     if classifier == 'nb':
         best_model, best_params = grid_search_classifier(X_train, Y_train, \
                     sample_size = sample_size, replace = False, classifier = classifier,\
                      parameters = {}, cv = 5, metric = 'f1_macro')
+        print "training nb..."
     elif classifier == 'svm':
+        print "training svm..."
         svc_parameters = {'kernel' : ['linear'],
                  'C': [0.2, 1, 10, 50, 100],
                   'class_weight':[None, 'balanced'],
@@ -52,8 +54,10 @@ def train_model(classifier, X_train, Y_train, sample_size = 1000):
         best_model, best_params = grid_search_classifier(X_train, Y_train, \
                     sample_size = sample_size, replace = False, classifier = classifier,\
                      parameters = svc_parameters, cv = 5, metric = 'f1_macro')
-    else:
-        rb_params = {"max_depth": [3, None, 5, 10],
+        
+    elif classifier == 'rf':
+        print "training rf..."
+        rf_params = {"max_depth": [3, None, 5, 10],
               "max_features": ['auto', 'sqrt', 'log2', 100],
               "min_samples_split": [10, 20],
               "min_samples_leaf": [3, 10, 20],
@@ -61,7 +65,9 @@ def train_model(classifier, X_train, Y_train, sample_size = 1000):
               "criterion": ["gini", "entropy"]}
         best_model, best_params = grid_search_classifier(X_train, Y_train, \
                     sample_size = sample_size, replace = False, classifier = classifier,\
-                     parameters = rb_params, cv = 5, metric = 'f1_macro')
+                     parameters = rf_params, cv = 5, metric = 'f1_macro')
+    else:
+        raise "wrong model input!"
     best_model.fit(X_train, Y_train)
     return best_model, best_params
 
@@ -112,7 +118,7 @@ if __name__ == '__main__':
     test = io.mmread('1gram_test.mtx')
     train_tags = pickle.load(open('1gram_train_tags.pk', 'r'))
     test_tags = pickle.load(open('1gram_test_tags.pk', 'r'))
-    best_model, best_params = train_model(model, train, train_tags)
+    best_model, best_params = train_model(model, train, train_tags, sample_size = 100)
     model_file = 'train_model_' + model + '.sav'
     pickle.dump(best_model, open(model_file, 'wb'))
     prediction = evaluate_and_report(best_model, test, test_tags, topics)
@@ -125,6 +131,5 @@ if __name__ == '__main__':
     plot_confusion_matrix(cnf_matrix, classes=topics,
                       title='Confusion matrix, without normalization')
     #plt.show()
-    image_name = 'confusion_matrix_' + 'model' + '.png'
-    savefig(image_name)
-    
+    image_name = 'confusion_matrix_' + model + '.png'
+    plt.savefig(image_name)

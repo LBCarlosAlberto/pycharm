@@ -105,6 +105,7 @@ def plot_confusion_matrix(cm, classes,
     
 if __name__ == '__main__':
     model = 'svm'
+    print "model:", model
     topics = ['business','environment','fashion','lifeandstyle',\
                 'politics','sport','technology','travel','world']
     train = io.mmread('1gram_train.mtx')
